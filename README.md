@@ -1,39 +1,42 @@
-﻿#  Data Structure Visualizer
+﻿# 🎯 Data Structure Visualizer
 
-Interactive visualization tool for learning data structures through real-time file uploads.
+> **Learn Data Structures by Seeing Them in Action**
 
-## Features
+A full-stack educational platform that visualizes data structure operations in real-time, helping students and developers understand how algorithms work under the hood.
 
--  HashMap visualization with collision handling
--  Binary Tree sorted by file size
--  Linked List sequential storage
--  Real-time WebSocket updates
--  50MB storage quota per user
--  Beautiful animations
+![Java](https://img.shields.io/badge/Java-17-orange)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.0-green)
+![WebSocket](https://img.shields.io/badge/WebSocket-STOMP-blue)
+![Canvas API](https://img.shields.io/badge/Canvas-API-red)
 
-## Quick Start
+---
 
-\\\ash
-# Backend
-cd backend
-mvn clean install
-mvn spring-boot:run
+## ✨ Features
 
-# Frontend (new terminal)
-cd frontend
-python -m http.server 3000
-# Or use Live Server in VS Code
+### 🔗 Linked List File Storage
+- **Real-time Visualization**: Watch files being inserted, searched, and deleted
+- **Step-by-step Animation**: See each operation broken down into individual steps
+- **Code Correlation**: View the actual Java code executing during operations
+- **File Management**: Upload real files and manage them using linked list operations
 
-# Open browser
-http://localhost:3000/index.html
-\\\
+### 📚 Coming Soon
+- Binary Search Tree
+- Hash Map
+- Stack & Queue
+- Graph Algorithms
 
-## Tech Stack
+---
 
-- **Backend:** Java 17, Spring Boot 3.1, WebSocket
-- **Frontend:** HTML5 Canvas, JavaScript ES6+
-- **Build:** Maven
+## 🚀 Quick Start
 
-## License
+### Prerequisites
+- Java 17 or higher
+- Maven 3.6+
+- Modern web browser (Chrome, Firefox, Edge)
 
-MIT License
+### Installation
+
+1. **Clone the repository**
+```bash
+git clone https://github.com/yourusername/data-structure-visualizer.git
+cd data-structure-visualizer

@@ -7,48 +7,171 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1> Data Structure Visualizer</h1>
-            <p>Interactive Learning Through Real-Time Visualization</p>
-        </header>
-        
-        <nav class="navigation">
-            <a href="index.html" class="nav-link active">Home</a>
-            <a href="linked-list.html" class="nav-link">Linked List</a>
-            <a href="file-storage.html" class="nav-link">File Storage</a>
-        </nav>
-        
-        <main>
-            <div class="hero">
-                <h2>Welcome to Data Structure Visualizer!</h2>
-                <p>Upload files and watch them organize in real-time using different data structures.</p>
-                
-                <div class="feature-cards">
-                    <div class="card">
-                        <div class="card-icon"></div>
-                        <h3>HashMap</h3>
-                        <p>Fast O(1) lookups with hash-based storage</p>
+    <div class="landing-container">
+        <header class="hero">
+            <div class="hero-content">
+                <h1 class="glitch" data-text="DATA STRUCTURE VISUALIZER">
+                    DATA STRUCTURE VISUALIZER
+                </h1>
+                <p class="tagline">See Code Come to Life • Learn by Watching</p>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-number">5+</span>
+                        <span class="stat-label">Data Structures</span>
                     </div>
-                    
-                    <div class="card">
-                        <div class="card-icon"></div>
-                        <h3>Binary Tree</h3>
-                        <p>Organized by size with O(log n) operations</p>
+                    <div class="stat">
+                        <span class="stat-number">50+</span>
+                        <span class="stat-label">Operations</span>
                     </div>
-                    
-                    <div class="card">
-                        <div class="card-icon"></div>
-                        <h3>Linked List</h3>
-                        <p>Sequential storage with pointer visualization</p>
+                    <div class="stat">
+                        <span class="stat-number">∞</span>
+                        <span class="stat-label">Learning</span>
                     </div>
-                </div>
-                
-                <div class="cta">
-                    <a href="file-storage.html" class="btn btn-primary">Get Started </a>
                 </div>
             </div>
-        </main>
+        </header>
+
+        <section class="features">
+            <h2>🎯 Choose Your Learning Path</h2>
+            
+            <div class="feature-grid">
+                <!-- Linked List -->
+                <div class="feature-card active">
+                    <div class="card-icon">🔗</div>
+                    <h3>Linked List File Storage</h3>
+                    <p>Upload files and watch them being linked together in real-time</p>
+                    <ul class="feature-list">
+                        <li>✅ Insert Animation</li>
+                        <li>✅ Search Traversal</li>
+                        <li>✅ Delete & Relink</li>
+                        <li>✅ Real File Storage</li>
+                    </ul>
+                    <a href="file-storage.html" class="btn btn-primary">
+                        Launch Demo →
+                    </a>
+                </div>
+
+                <!-- Binary Tree (Coming Soon) -->
+                <div class="feature-card disabled">
+                    <div class="card-icon">🌳</div>
+                    <h3>Binary Search Tree</h3>
+                    <p>Visualize balanced tree operations and rotations</p>
+                    <ul class="feature-list">
+                        <li>⏳ Insert with Balancing</li>
+                        <li>⏳ In-Order Traversal</li>
+                        <li>⏳ Level-Order Visualization</li>
+                        <li>⏳ AVL Rotations</li>
+                    </ul>
+                    <button class="btn btn-secondary" disabled>
+                        Coming Soon
+                    </button>
+                </div>
+
+                <!-- Hash Map (Coming Soon) -->
+                <div class="feature-card disabled">
+                    <div class="card-icon">🗂️</div>
+                    <h3>Hash Map Storage</h3>
+                    <p>Watch hash functions and collision resolution in action</p>
+                    <ul class="feature-list">
+                        <li>⏳ Hash Function Visualization</li>
+                        <li>⏳ Collision Handling</li>
+                        <li>⏳ Load Factor Animation</li>
+                        <li>⏳ Rehashing Process</li>
+                    </ul>
+                    <button class="btn btn-secondary" disabled>
+                        Coming Soon
+                    </button>
+                </div>
+
+                <!-- Stack (Coming Soon) -->
+                <div class="feature-card disabled">
+                    <div class="card-icon">📚</div>
+                    <h3>Stack Operations</h3>
+                    <p>See LIFO principle with push and pop animations</p>
+                    <ul class="feature-list">
+                        <li>⏳ Push Animation</li>
+                        <li>⏳ Pop Animation</li>
+                        <li>⏳ Peek Operation</li>
+                        <li>⏳ Overflow/Underflow</li>
+                    </ul>
+                    <button class="btn btn-secondary" disabled>
+                        Coming Soon
+                    </button>
+                </div>
+
+                <!-- Queue (Coming Soon) -->
+                <div class="feature-card disabled">
+                    <div class="card-icon">🎫</div>
+                    <h3>Queue System</h3>
+                    <p>Understand FIFO with enqueue and dequeue visualization</p>
+                    <ul class="feature-list">
+                        <li>⏳ Enqueue Animation</li>
+                        <li>⏳ Dequeue Animation</li>
+                        <li>⏳ Circular Queue</li>
+                        <li>⏳ Priority Queue</li>
+                    </ul>
+                    <button class="btn btn-secondary" disabled>
+                        Coming Soon
+                    </button>
+                </div>
+
+                <!-- Graph (Coming Soon) -->
+                <div class="feature-card disabled">
+                    <div class="card-icon">🕸️</div>
+                    <h3>Graph Algorithms</h3>
+                    <p>Explore BFS, DFS, and shortest path algorithms</p>
+                    <ul class="feature-list">
+                        <li>⏳ BFS Traversal</li>
+                        <li>⏳ DFS Traversal</li>
+                        <li>⏳ Dijkstra's Algorithm</li>
+                        <li>⏳ Minimum Spanning Tree</li>
+                    </ul>
+                    <button class="btn btn-secondary" disabled>
+                        Coming Soon
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section class="how-it-works">
+            <h2>🎓 How It Works</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Choose Operation</h3>
+                    <p>Select upload, search, or delete</p>
+                </div>
+                <div class="step-arrow">→</div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Watch Magic</h3>
+                    <p>See real-time animation of operations</p>
+                </div>
+                <div class="step-arrow">→</div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Learn Code</h3>
+                    <p>View actual Java code being executed</p>
+                </div>
+                <div class="step-arrow">→</div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>Master Concepts</h3>
+                    <p>Understand through visualization</p>
+                </div>
+            </div>
+        </section>
+
+        <footer class="landing-footer">
+            <p>Built with ❤️ for learners | Java + Spring Boot + WebSocket + Canvas API</p>
+            <div class="footer-links">
+                <a href="https://github.com" target="_blank">GitHub</a>
+                <a href="#documentation">Docs</a>
+                <a href="#about">About</a>
+            </div>
+        </footer>
     </div>
+
+    <script src="js/landing-animations.js"></script>
 </body>
 </html>

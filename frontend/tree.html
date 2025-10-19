@@ -1,59 +1,62 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Linked List File Storage - Visualizer</title>
+    <title>Binary Tree Visualizer</title>
     <link rel="stylesheet" href="css/styles.css">
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
 </head>
 <body class="app-page">
-    <!-- Navigation Bar -->
+    <!-- Navigation -->
     <nav class="app-nav">
         <div class="nav-brand">
             <a href="index.html">← Back</a>
-            <h2>🔗 Linked List Visualizer</h2>
+            <h2>🌳 Binary Search Tree Visualizer</h2>
         </div>
         <div class="nav-stats" id="nav-stats">
-            <span>Files: <strong id="file-count">0</strong></span>
-            <span>Storage: <strong id="storage-used">0 KB</strong></span>
+            <span>Nodes: <strong id="tree-size">0</strong></span>
+            <span>Height: <strong id="tree-height">0</strong></span>
         </div>
     </nav>
 
     <div class="app-container">
-        <!-- Left Panel - Controls -->
+        <!-- Left Panel -->
         <aside class="control-panel">
             <div class="panel-section">
-                <h3>📤 Upload File</h3>
+                <h3>➕ INSERT Node</h3>
                 <div class="upload-zone" id="upload-zone">
                     <input type="file" id="file-input" hidden>
                     <div class="upload-content">
                         <span class="upload-icon">📁</span>
                         <p>Click or drag file here</p>
-                        <small>Max 10MB</small>
+                        <small>Sorted by filename</small>
                     </div>
                 </div>
-                <button class="btn btn-primary btn-block" id="upload-btn">
-                    Upload & Visualize
+                <button class="btn btn-primary btn-block" id="insert-btn">
+                    INSERT into Tree
                 </button>
             </div>
 
             <div class="panel-section">
-                <h3>🔍 Search File</h3>
+                <h3>🔍 SEARCH Node</h3>
                 <input type="text" id="search-input" placeholder="Enter filename..." class="input-field">
                 <button class="btn btn-success btn-block" id="search-btn">
-                    Search
+                    SEARCH in Tree
                 </button>
             </div>
 
             <div class="panel-section">
-                <h3>🗑️ Delete File</h3>
-                <select id="delete-select" class="input-field">
-                    <option value="">-- Select file to delete --</option>
-                </select>
-                <button class="btn btn-danger btn-block" id="delete-btn">
-                    Delete
+                <h3>🎯 Traversal Methods</h3>
+                <button class="btn btn-outline btn-block" id="inorder-btn">
+                    In-Order Traversal
+                </button>
+                <button class="btn btn-outline btn-block" id="preorder-btn">
+                    Pre-Order Traversal
+                </button>
+                <button class="btn btn-outline btn-block" id="postorder-btn">
+                    Post-Order Traversal
                 </button>
             </div>
 
@@ -62,8 +65,8 @@
                 <button class="btn btn-outline btn-block" id="refresh-btn">
                     Refresh State
                 </button>
-                <button class="btn btn-outline btn-block" id="clear-all-btn">
-                    Clear All Files
+                <button class="btn btn-outline btn-block" id="clear-btn">
+                    Clear Tree
                 </button>
             </div>
 
@@ -73,14 +76,14 @@
             </div>
         </aside>
 
-        <!-- Center Panel - Visualization Canvas -->
+        <!-- Center Panel -->
         <main class="visualization-panel">
             <div class="canvas-header">
-                <h3>Visual Representation</h3>
-                <div class="canvas-controls">
-                    <button class="btn-icon" id="zoom-in" title="Zoom In">🔍+</button>
-                    <button class="btn-icon" id="zoom-out" title="Zoom Out">🔍-</button>
-                    <button class="btn-icon" id="fit-screen" title="Fit to Screen">⛶</button>
+                <h3>Binary Search Tree Structure</h3>
+                <div class="tree-legend">
+                    <span class="legend-item">🔴 Current Node</span>
+                    <span class="legend-item">🟢 Found</span>
+                    <span class="legend-item">⚪ Visited</span>
                 </div>
             </div>
             
@@ -88,9 +91,9 @@
                 <canvas id="visualization-canvas"></canvas>
                 <div class="canvas-overlay" id="empty-state">
                     <div class="empty-content">
-                        <span class="empty-icon">📭</span>
-                        <h3>No Files Yet</h3>
-                        <p>Upload a file to see the magic happen!</p>
+                        <span class="empty-icon">🌳</span>
+                        <h3>Tree is Empty</h3>
+                        <p>Insert a file to start building the tree!</p>
                     </div>
                 </div>
             </div>
@@ -106,23 +109,32 @@
             </div>
         </main>
 
-        <!-- Right Panel - Code Display -->
+        <!-- Right Panel -->
         <aside class="code-panel">
             <div class="code-header">
-                <h3>💻 Java Code</h3>
-                <button class="btn-icon" id="toggle-code">📌</button>
+                <h3>💻 BST Code</h3>
             </div>
             
             <div class="code-tabs">
-                <button class="code-tab active" data-code="insert">Insert</button>
-                <button class="code-tab" data-code="search">Search</button>
-                <button class="code-tab" data-code="delete">Delete</button>
+                <button class="code-tab active" data-code="insert">INSERT</button>
+                <button class="code-tab" data-code="search">SEARCH</button>
+                <button class="code-tab" data-code="traversal">TRAVERSAL</button>
             </div>
 
             <div class="code-content">
-                <pre id="code-display"><code class="language-java">// Select an operation to view code
-public class FileLinkedList {
-    // Code will appear here during operations
+                <pre id="code-display"><code class="language-java">// INSERT Operation (Recursive)
+public Node insert(Node root, T data) {
+    if (root == null) {
+        return new Node(data);
+    }
+    
+    if (data.compareTo(root.data) < 0) {
+        root.left = insert(root.left, data);
+    } else {
+        root.right = insert(root.right, data);
+    }
+    
+    return root;
 }</code></pre>
             </div>
 
@@ -133,50 +145,20 @@ public class FileLinkedList {
         </aside>
     </div>
 
-    <!-- File List Modal -->
-    <div class="modal" id="file-list-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>📋 All Files</h3>
-                <button class="modal-close" id="close-modal">×</button>
-            </div>
-            <div class="modal-body">
-                <table class="file-table" id="file-table">
-                    <thead>
-                        <tr>
-                            <th>Filename</th>
-                            <th>Type</th>
-                            <th>Size</th>
-                            <th>Uploaded</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="file-table-body">
-                        <tr>
-                            <td colspan="5" class="text-center">Loading...</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <!-- Toast Notification -->
+    <!-- Toast -->
     <div class="toast" id="toast">
         <span class="toast-icon" id="toast-icon">ℹ️</span>
         <span class="toast-message" id="toast-message">Notification</span>
     </div>
 
     <!-- Scripts -->
-    <script src="js/file-visualizer.js"></script>
-    <script src="js/storage-manager.js"></script>
+    <script src="js/tree-visualizer.js"></script>
+    <script src="js/tree-manager.js"></script>
     <script>
-        // Initialize application
         document.addEventListener('DOMContentLoaded', () => {
-            const visualizer = new FileLinkedListVisualizer('visualization-canvas');
-            const storageManager = new StorageManager(visualizer);
-            
-            console.log('✅ Application Initialized');
+            const visualizer = new TreeVisualizer('visualization-canvas');
+            const manager = new TreeManager(visualizer);
+            console.log('✅ Tree Application Initialized');
         });
     </script>
 </body>

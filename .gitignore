@@ -12,10 +12,15 @@ pom.xml.versionsBackup
 pom.xml.next
 release.properties
 dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
 
 # IDE
 .idea/
+*.iws
 *.iml
+*.ipr
 .vscode/
 *.swp
 *.swo
@@ -25,14 +30,22 @@ dependency-reduced-pom.xml
 .DS_Store
 Thumbs.db
 
-# Uploads
+# Upload directory (but keep the directory itself)
 backend/uploads/*
 !backend/uploads/.gitkeep
 
-# Environment
+# Node modules (if you add npm later)
+node_modules/
+
+# Environment variables
 .env
 .env.local
 
-# Node modules (if using npm)
-node_modules/
-package-lock.json
+# Build files
+dist/
+build/
+
+# Temporary files
+*.tmp
+*.bak
+*.cache

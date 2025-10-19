@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Queue Visualizer - FIFO</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+</head>
+<body class="app-page">
+    <!-- Navigation -->
+    <nav class="app-nav">
+        <div class="nav-brand">
+            <a href="index.html">← Back</a>
+            <h2>🎫 Queue Visualizer (FIFO)</h2>
+        </div>
+        <div class="nav-stats" id="nav-stats">
+            <span>Size: <strong id="queue-size">0</strong></span>
+            <span>Max: <strong>10</strong></span>
+            <span>Status: <strong id="queue-status">Empty</strong></span>
+        </div>
+    </nav>
+
+    <div class="app-container">
+        <!-- Left Panel -->
+        <aside class="control-panel">
+            <div class="panel-section">
+                <h3>📤 ENQUEUE (Add to Rear)</h3>
+                <div class="upload-zone" id="upload-zone">
+                    <input type="file" id="file-input" hidden>
+                    <div class="upload-content">
+                        <span class="upload-icon">📁</span>
+                        <p>Click or drag file here</p>
+                        <small>Max 10MB</small>
+                    </div>
+                </div>
+                <button class="btn btn-primary btn-block" id="enqueue-btn">
+                    ENQUEUE to Queue
+                </button>
+            </div>
+
+            <div class="panel-section">
+                <h3>🗑️ DEQUEUE (Remove from Front)</h3>
+                <button class="btn btn-danger btn-block" id="dequeue-btn">
+                    DEQUEUE from Queue
+                </button>
+            </div>
+
+            <div class="panel-section">
+                <h3>👁️ PEEK (View Front)</h3>
+                <button class="btn btn-success btn-block" id="peek-btn">
+                    PEEK at Front
+                </button>
+            </div>
+
+            <div class="panel-section">
+                <h3>⚡ Quick Actions</h3>
+                <button class="btn btn-outline btn-block" id="refresh-btn">
+                    Refresh State
+                </button>
+                <button class="btn btn-outline btn-block" id="clear-btn">
+                    Clear Queue
+                </button>
+            </div>
+
+            <div class="panel-section connection-status">
+                <div id="connection-indicator" class="status-dot connecting"></div>
+                <span id="connection-text">Connecting...</span>
+            </div>
+        </aside>
+
+        <!-- Center Panel -->
+        <main class="visualization-panel">
+            <div class="canvas-header">
+                <h3>Queue Visualization (FIFO - First In First Out)</h3>
+                <div class="fifo-badge">FRONT ➜ REAR</div>
+            </div>
+            
+            <div class="canvas-wrapper">
+                <canvas id="visualization-canvas"></canvas>
+                <div class="canvas-overlay" id="empty-state">
+                    <div class="empty-content">
+                        <span class="empty-icon">📭</span>
+                        <h3>Queue is Empty</h3>
+                        <p>Enqueue a file to see the queue in action!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="operation-panel" id="operation-panel">
+                <div class="operation-header">
+                    <span class="operation-title">Current Operation</span>
+                    <span class="operation-progress" id="operation-progress">Step 0/0</span>
+                </div>
+                <div class="operation-description" id="operation-description">
+                    <p>Waiting for operation...</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Panel -->
+        <aside class="code-panel">
+            <div class="code-header">
+                <h3>💻 Queue Code</h3>
+            </div>
+            
+            <div class="code-tabs">
+                <button class="code-tab active" data-code="enqueue">ENQUEUE</button>
+                <button class="code-tab" data-code="dequeue">DEQUEUE</button>
+                <button class="code-tab" data-code="peek">PEEK</button>
+            </div>
+
+            <div class="code-content">
+                <pre id="code-display"><code class="language-java">// ENQUEUE Operation
+public void enqueue(T element) {
+    if (isFull()) {
+        throw new QueueFullException();
+    }
+    
+    rear = (rear + 1) % capacity;
+    queue[rear] = element;
+    size++;
+}</code></pre>
+            </div>
+
+            <div class="code-highlight" id="code-highlight">
+                <span class="highlight-label">Executing:</span>
+                <code id="current-line">-</code>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <span class="toast-icon" id="toast-icon">ℹ️</span>
+        <span class="toast-message" id="toast-message">Notification</span>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/queue-visualizer.js"></script>
+    <script src="js/queue-manager.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const visualizer = new QueueVisualizer('visualization-canvas');
+            const manager = new QueueManager(visualizer);
+            console.log('✅ Queue Application Initialized');
+        });
+    </script>
+</body>
+</html>
