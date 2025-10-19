@@ -1,0 +1,68 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Storage - Data Structure Visualizer</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1> File Storage Visualizer</h1>
+            <p>Upload files and watch them organize in real-time!</p>
+        </header>
+        
+        <!-- Storage Quota -->
+        <div class="storage-quota">
+            <div class="quota-info">
+                <span class="quota-label">Storage Used:</span>
+                <span id="storageUsed" class="quota-value">0 MB</span>
+                <span class="quota-label">/ 50 MB</span>
+            </div>
+            <div class="quota-bar">
+                <div id="quotaProgress" class="quota-progress" style="width: 0%"></div>
+            </div>
+        </div>
+        
+        <!-- Controls -->
+        <div class="controls">
+            <div class="control-group">
+                <label>Data Structure:</label>
+                <select id="structureType" class="structure-select">
+                    <option value="hashmap">HashMap (Buckets)</option>
+                    <option value="binarytree">Binary Tree (By Size)</option>
+                    <option value="linkedlist">Linked List (Sequential)</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <div id="dropZone" class="drop-zone">
+                    <div class="drop-zone-content">
+                        <span class="upload-icon"></span>
+                        <p>Drag & Drop files here</p>
+                        <p class="drop-zone-hint">or click to browse</p>
+                        <input type="file" id="fileInput" multiple hidden>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Visualization Canvas -->
+        <div class="canvas-container">
+            <canvas id="storageCanvas" width="1200" height="600"></canvas>
+        </div>
+        
+        <!-- File List -->
+        <div class="file-list-panel">
+            <h3> Uploaded Files</h3>
+            <div id="fileListContainer"></div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <script src="js/file-visualizer.js"></script>
+    <script src="js/storage-manager.js"></script>
+</body>
+</html>
