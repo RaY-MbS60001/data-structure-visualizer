@@ -59,7 +59,7 @@ public class FileQueue {
         if (queue.size() >= maxSize) {
             steps.add(new VisualizationStep(
                 "QUEUE_FULL",
-                "❌ Queue FULL! Max: " + maxSize,
+                "âŒ Queue FULL! Max: " + maxSize,
                 convertToSnapshots(),
                 null,
                 Map.of("isFull", true)
@@ -69,7 +69,7 @@ public class FileQueue {
         
         steps.add(new VisualizationStep(
             "PREPARE_ENQUEUE",
-            "📦 Preparing to ENQUEUE: " + file.getFilename(),
+            "ðŸ“¦ Preparing to ENQUEUE: " + file.getFilename(),
             convertToSnapshots(),
             null,
             Map.of("action", "enqueue")
@@ -79,7 +79,7 @@ public class FileQueue {
         
         steps.add(new VisualizationStep(
             "CREATE_NODE",
-            "📝 Adding to REAR",
+            "ðŸ“ Adding to REAR",
             convertToSnapshots(),
             null,
             Map.of("position", queue.size())
@@ -89,7 +89,7 @@ public class FileQueue {
         
         steps.add(new VisualizationStep(
             "ENQUEUE_COMPLETE",
-            "✅ ENQUEUED at REAR! Size: " + queue.size(),
+            "âœ… ENQUEUED at REAR! Size: " + queue.size(),
             convertToSnapshots(),
             newNode.getNodeId(),
             Map.of("size", queue.size(), "rear", newNode.getNodeId())
@@ -104,7 +104,7 @@ public class FileQueue {
         if (queue.isEmpty()) {
             steps.add(new VisualizationStep(
                 "QUEUE_EMPTY",
-                "❌ Queue EMPTY!",
+                "âŒ Queue EMPTY!",
                 convertToSnapshots(),
                 null,
                 Map.of("isEmpty", true)
@@ -116,7 +116,7 @@ public class FileQueue {
         
         steps.add(new VisualizationStep(
             "SHOW_FRONT",
-            "👀 FRONT: " + frontNode.getFile().getFilename(),
+            "ðŸ‘€ FRONT: " + frontNode.getFile().getFilename(),
             convertToSnapshots(),
             frontNode.getNodeId(),
             Map.of("front", frontNode.getFile().getFilename())
@@ -126,7 +126,7 @@ public class FileQueue {
         
         steps.add(new VisualizationStep(
             "REMOVING",
-            "🗑️ Removing from FRONT...",
+            "ðŸ—‘ï¸ Removing from FRONT...",
             convertToSnapshots(),
             null,
             Map.of("removed", dequeuedNode.getFile().getFilename())
@@ -134,7 +134,7 @@ public class FileQueue {
         
         steps.add(new VisualizationStep(
             "DEQUEUE_COMPLETE",
-            "✅ DEQUEUED: " + dequeuedNode.getFile().getFilename(),
+            "âœ… DEQUEUED: " + dequeuedNode.getFile().getFilename(),
             convertToSnapshots(),
             null,
             Map.of("dequeued", dequeuedNode.getFile().getFilename(), "size", queue.size())
@@ -152,7 +152,7 @@ public class FileQueue {
         if (queue.isEmpty()) {
             steps.add(new VisualizationStep(
                 "QUEUE_EMPTY",
-                "❌ Queue EMPTY!",
+                "âŒ Queue EMPTY!",
                 convertToSnapshots(),
                 null,
                 Map.of("isEmpty", true)
@@ -164,7 +164,7 @@ public class FileQueue {
 
         steps.add(new VisualizationStep(
             "SHOW_FRONT",
-            "👀 FRONT: " + frontNode.getFile().getFilename(),
+            "ðŸ‘€ FRONT: " + frontNode.getFile().getFilename(),
             convertToSnapshots(),
             frontNode.getNodeId(),
             Map.of("front", frontNode.getFile().getFilename())

@@ -997,3 +997,69 @@ body {
 .bounce {
     animation: bounce 1s ease infinite;
 }
+/* ============================================
+   ARRAY CARD-STYLE VISUALIZATION (Neo-Glow)
+   ============================================ */
+.array-elements {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 2rem;
+}
+
+.array-card {
+  background: #09312a; /* deep greenish dark */
+  border: 3px solid var(--primary);
+  border-radius: 14px;
+  width: 240px;
+  min-height: 110px;
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+  color: #fff;
+  font-family: 'Segoe UI', sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 1rem 1.2rem;
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.array-card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 25px rgba(0, 255, 136, 0.8);
+}
+
+.array-card .file-icon {
+  font-size: 1.6rem;
+  margin-right: 0.3rem;
+}
+
+.array-card .filename {
+  font-weight: 700;
+  color: #00ffcc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.array-card .filesize {
+  font-size: 0.9rem;
+  color: #ccebd8;
+  margin-top: 0.2rem;
+}
+
+/* glowing arrow/label like "TOP →" */
+.array-pointer {
+  position: absolute;
+  left: -65px;
+  top: 40%;
+  color: var(--primary);
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.array-pointer::after {
+  content: '→';
+  margin-left: 6px;
+}

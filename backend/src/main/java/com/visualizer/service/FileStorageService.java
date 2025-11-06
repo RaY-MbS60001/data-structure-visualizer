@@ -1,4 +1,4 @@
-﻿package com.visualizer.service;
+package com.visualizer.service;
 
 import com.visualizer.model.FileLinkedList;
 import com.visualizer.model.StoredFile;

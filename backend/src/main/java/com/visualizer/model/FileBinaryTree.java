@@ -60,7 +60,7 @@ public class FileBinaryTree {
         
         steps.add(new VisualizationStep(
             "START_INSERT",
-            "🌳 Inserting: " + file.getFilename(),
+            "ðŸŒ³ Inserting: " + file.getFilename(),
             convertToSnapshots(),
             null,
             Map.of("action", "insert", "filename", file.getFilename())
@@ -72,7 +72,7 @@ public class FileBinaryTree {
             
             steps.add(new VisualizationStep(
                 "SET_ROOT",
-                "✅ Set as ROOT node",
+                "âœ… Set as ROOT node",
                 convertToSnapshots(),
                 root.getNodeId(),
                 Map.of("isRoot", true)
@@ -86,7 +86,7 @@ public class FileBinaryTree {
         
         steps.add(new VisualizationStep(
             "INSERT_COMPLETE",
-            "✅ Inserted! Tree size: " + size,
+            "âœ… Inserted! Tree size: " + size,
             convertToSnapshots(),
             null,
             Map.of("size", size)
@@ -101,7 +101,7 @@ public class FileBinaryTree {
             
             steps.add(new VisualizationStep(
                 "INSERT_NODE",
-                "📝 Created node at level " + level,
+                "ðŸ“ Created node at level " + level,
                 convertToSnapshots(),
                 newNode.getNodeId(),
                 Map.of("level", level)
@@ -112,7 +112,7 @@ public class FileBinaryTree {
         
         steps.add(new VisualizationStep(
             "TRAVERSE",
-            "🔍 Comparing with: " + current.getFile().getFilename(),
+            "ðŸ” Comparing with: " + current.getFile().getFilename(),
             convertToSnapshots(),
             current.getNodeId(),
             Map.of("comparing", true)
@@ -122,7 +122,7 @@ public class FileBinaryTree {
         if (file.getFilename().compareTo(current.getFile().getFilename()) < 0) {
             steps.add(new VisualizationStep(
                 "GO_LEFT",
-                "⬅️ Going LEFT (smaller)",
+                "â¬…ï¸ Going LEFT (smaller)",
                 convertToSnapshots(),
                 current.getNodeId(),
                 Map.of("direction", "left")
@@ -131,7 +131,7 @@ public class FileBinaryTree {
         } else {
             steps.add(new VisualizationStep(
                 "GO_RIGHT",
-                "➡️ Going RIGHT (larger/equal)",
+                "âž¡ï¸ Going RIGHT (larger/equal)",
                 convertToSnapshots(),
                 current.getNodeId(),
                 Map.of("direction", "right")
@@ -147,7 +147,7 @@ public class FileBinaryTree {
         
         steps.add(new VisualizationStep(
             "START_SEARCH",
-            "🔎 Searching for: " + filename,
+            "ðŸ”Ž Searching for: " + filename,
             convertToSnapshots(),
             null,
             Map.of("target", filename)
@@ -162,7 +162,7 @@ public class FileBinaryTree {
         if (current == null) {
             steps.add(new VisualizationStep(
                 "NOT_FOUND",
-                "❌ File not found",
+                "âŒ File not found",
                 convertToSnapshots(),
                 null,
                 Map.of("found", false)
@@ -172,7 +172,7 @@ public class FileBinaryTree {
         
         steps.add(new VisualizationStep(
             "COMPARE",
-            "🔍 Checking: " + current.getFile().getFilename(),
+            "ðŸ” Checking: " + current.getFile().getFilename(),
             convertToSnapshots(),
             current.getNodeId(),
             Map.of("comparing", current.getFile().getFilename())
@@ -181,7 +181,7 @@ public class FileBinaryTree {
         if (filename.equals(current.getFile().getFilename())) {
             steps.add(new VisualizationStep(
                 "FOUND",
-                "✅ FOUND at level " + current.getLevel(),
+                "âœ… FOUND at level " + current.getLevel(),
                 convertToSnapshots(),
                 current.getNodeId(),
                 Map.of("found", true, "level", current.getLevel())
@@ -192,7 +192,7 @@ public class FileBinaryTree {
         if (filename.compareTo(current.getFile().getFilename()) < 0) {
             steps.add(new VisualizationStep(
                 "GO_LEFT",
-                "⬅️ Going LEFT...",
+                "â¬…ï¸ Going LEFT...",
                 convertToSnapshots(),
                 current.getNodeId(),
                 Map.of("direction", "left")
@@ -202,7 +202,7 @@ public class FileBinaryTree {
         
         steps.add(new VisualizationStep(
             "GO_RIGHT",
-            "➡️ Going RIGHT...",
+            "âž¡ï¸ Going RIGHT...",
             convertToSnapshots(),
             current.getNodeId(),
             Map.of("direction", "right")

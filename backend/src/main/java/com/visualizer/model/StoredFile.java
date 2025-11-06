@@ -1,4 +1,4 @@
-﻿package com.visualizer.model;
+package com.visualizer.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

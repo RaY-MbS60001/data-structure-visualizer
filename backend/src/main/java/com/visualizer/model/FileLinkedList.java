@@ -87,7 +87,7 @@ public class FileLinkedList {
         // Step 1: Create new node
         steps.add(new VisualizationStep(
             "CREATE_NODE",
-            "📦 Creating new node for file: " + file.getFilename(),
+            "ðŸ“¦ Creating new node for file: " + file.getFilename(),
             Collections.singletonList(newNode),
             newNode
         ));
@@ -97,7 +97,7 @@ public class FileLinkedList {
             head = newNode;
             steps.add(new VisualizationStep(
                 "SET_HEAD",
-                "✨ List was empty. Setting as HEAD node.",
+                "âœ¨ List was empty. Setting as HEAD node.",
                 Collections.singletonList(newNode),
                 newNode
             ));
@@ -111,7 +111,7 @@ public class FileLinkedList {
             while (current.next != null) {
                 steps.add(new VisualizationStep(
                     "TRAVERSE",
-                    String.format("🔍 Traversing... Currently at position %d: %s", 
+                    String.format("ðŸ” Traversing... Currently at position %d: %s", 
                                 position, current.getFile().getFilename()),
                     new ArrayList<>(traversedNodes),
                     current
@@ -125,7 +125,7 @@ public class FileLinkedList {
             // Step 3: Found the end
             steps.add(new VisualizationStep(
                 "FOUND_END",
-                String.format("🎯 Found end of list at position %d", position),
+                String.format("ðŸŽ¯ Found end of list at position %d", position),
                 new ArrayList<>(traversedNodes),
                 current
             ));
@@ -136,7 +136,7 @@ public class FileLinkedList {
             
             steps.add(new VisualizationStep(
                 "LINK_NODE",
-                "🔗 Linking new node to the end of the list",
+                "ðŸ”— Linking new node to the end of the list",
                 traversedNodes,
                 newNode
             ));
@@ -147,7 +147,7 @@ public class FileLinkedList {
         // Final step
         VisualizationStep finalStep = new VisualizationStep(
             "COMPLETE",
-            String.format("✅ File added successfully! Total files: %d", size),
+            String.format("âœ… File added successfully! Total files: %d", size),
             getAllNodes(),
             null
         );
@@ -165,7 +165,7 @@ public class FileLinkedList {
         if (head == null) {
             steps.add(new VisualizationStep(
                 "EMPTY_LIST",
-                "❌ Cannot search in empty list",
+                "âŒ Cannot search in empty list",
                 Collections.emptyList(),
                 null
             ));
@@ -178,7 +178,7 @@ public class FileLinkedList {
         
         steps.add(new VisualizationStep(
             "START_SEARCH",
-            String.format("🔎 Starting search for: %s", filename),
+            String.format("ðŸ”Ž Starting search for: %s", filename),
             allNodes,
             null
         ));
@@ -186,7 +186,7 @@ public class FileLinkedList {
         while (current != null) {
             steps.add(new VisualizationStep(
                 "COMPARE",
-                String.format("🔍 Position %d: Comparing '%s' with '%s'", 
+                String.format("ðŸ” Position %d: Comparing '%s' with '%s'", 
                             position, current.getFile().getFilename(), filename),
                 allNodes,
                 current
@@ -195,7 +195,7 @@ public class FileLinkedList {
             if (current.getFile().getFilename().equals(filename)) {
                 VisualizationStep foundStep = new VisualizationStep(
                     "FOUND",
-                    String.format("🎉 File FOUND at position %d!", position),
+                    String.format("ðŸŽ‰ File FOUND at position %d!", position),
                     allNodes,
                     current
                 );
@@ -213,7 +213,7 @@ public class FileLinkedList {
         // Not found
         steps.add(new VisualizationStep(
             "NOT_FOUND",
-            String.format("❌ File '%s' not found in the list", filename),
+            String.format("âŒ File '%s' not found in the list", filename),
             allNodes,
             null
         ));
@@ -228,7 +228,7 @@ public class FileLinkedList {
         if (head == null) {
             steps.add(new VisualizationStep(
                 "EMPTY_LIST",
-                "❌ Cannot delete from empty list",
+                "âŒ Cannot delete from empty list",
                 Collections.emptyList(),
                 null
             ));
@@ -241,7 +241,7 @@ public class FileLinkedList {
             
             steps.add(new VisualizationStep(
                 "DELETE_HEAD",
-                "🎯 Target is HEAD node. Preparing to delete...",
+                "ðŸŽ¯ Target is HEAD node. Preparing to delete...",
                 beforeDelete,
                 head
             ));
@@ -251,7 +251,7 @@ public class FileLinkedList {
             
             steps.add(new VisualizationStep(
                 "COMPLETE",
-                String.format("✅ HEAD deleted. New HEAD set. Remaining files: %d", size),
+                String.format("âœ… HEAD deleted. New HEAD set. Remaining files: %d", size),
                 head != null ? getAllNodes() : Collections.emptyList(),
                 head
             ));
@@ -267,7 +267,7 @@ public class FileLinkedList {
         
         steps.add(new VisualizationStep(
             "START_DELETE",
-            String.format("🗑️  Starting deletion of: %s", filename),
+            String.format("ðŸ—‘ï¸  Starting deletion of: %s", filename),
             allNodes,
             null
         ));
@@ -275,7 +275,7 @@ public class FileLinkedList {
         while (current != null) {
             steps.add(new VisualizationStep(
                 "TRAVERSE",
-                String.format("🔍 Position %d: Checking '%s'", 
+                String.format("ðŸ” Position %d: Checking '%s'", 
                             position, current.getFile().getFilename()),
                 allNodes,
                 current
@@ -284,7 +284,7 @@ public class FileLinkedList {
             if (current.getFile().getFilename().equals(filename)) {
                 steps.add(new VisualizationStep(
                     "FOUND_TARGET",
-                    String.format("🎯 Found target at position %d. Preparing to delete...", position),
+                    String.format("ðŸŽ¯ Found target at position %d. Preparing to delete...", position),
                     allNodes,
                     current
                 ));
@@ -298,14 +298,14 @@ public class FileLinkedList {
                 
                 steps.add(new VisualizationStep(
                     "RELINK",
-                    "🔗 Relinking: Connecting previous node to next node",
+                    "ðŸ”— Relinking: Connecting previous node to next node",
                     getAllNodes(),
                     previous
                 ));
                 
                 steps.add(new VisualizationStep(
                     "COMPLETE",
-                    String.format("✅ File deleted successfully! Remaining files: %d", size),
+                    String.format("âœ… File deleted successfully! Remaining files: %d", size),
                     getAllNodes(),
                     null
                 ));
@@ -321,7 +321,7 @@ public class FileLinkedList {
         // Not found
         steps.add(new VisualizationStep(
             "NOT_FOUND",
-            String.format("❌ File '%s' not found. Nothing deleted.", filename),
+            String.format("âŒ File '%s' not found. Nothing deleted.", filename),
             allNodes,
             null
         ));

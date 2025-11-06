@@ -57,7 +57,7 @@ public class FileStack {
         if (stack.size() >= maxSize) {
             steps.add(new VisualizationStep(
                 "OVERFLOW",
-                "❌ Stack Overflow! Cannot push. Max: " + maxSize,
+                "âŒ Stack Overflow! Cannot push. Max: " + maxSize,
                 convertToSnapshots(),
                 null,
                 Map.of("isFull", true, "size", stack.size())
@@ -67,7 +67,7 @@ public class FileStack {
         
         steps.add(new VisualizationStep(
             "PREPARE_PUSH",
-            "📦 Preparing to PUSH: " + file.getFilename(),
+            "ðŸ“¦ Preparing to PUSH: " + file.getFilename(),
             convertToSnapshots(),
             null,
             Map.of("action", "push")
@@ -77,7 +77,7 @@ public class FileStack {
         
         steps.add(new VisualizationStep(
             "CREATE_NODE",
-            "📝 Creating stack node at position " + stack.size(),
+            "ðŸ“ Creating stack node at position " + stack.size(),
             convertToSnapshots(),
             newNode.getNodeId(),
             Map.of("position", stack.size())
@@ -87,7 +87,7 @@ public class FileStack {
         
         steps.add(new VisualizationStep(
             "PUSH_COMPLETE",
-            "✅ PUSHED! Stack size: " + stack.size() + "/" + maxSize,
+            "âœ… PUSHED! Stack size: " + stack.size() + "/" + maxSize,
             convertToSnapshots(),
             newNode.getNodeId(),
             Map.of("size", stack.size(), "top", newNode.getNodeId())
@@ -102,7 +102,7 @@ public class FileStack {
         if (stack.isEmpty()) {
             steps.add(new VisualizationStep(
                 "UNDERFLOW",
-                "❌ Stack Underflow! Empty stack",
+                "âŒ Stack Underflow! Empty stack",
                 convertToSnapshots(),
                 null,
                 Map.of("isEmpty", true)
@@ -114,7 +114,7 @@ public class FileStack {
         
         steps.add(new VisualizationStep(
             "SHOW_TOP",
-            "👀 TOP element: " + topNode.getFile().getFilename(),
+            "ðŸ‘€ TOP element: " + topNode.getFile().getFilename(),
             convertToSnapshots(),
             topNode.getNodeId(),
             Map.of("top", topNode.getFile().getFilename())
@@ -124,7 +124,7 @@ public class FileStack {
         
         steps.add(new VisualizationStep(
             "REMOVING",
-            "🗑️ Removing TOP...",
+            "ðŸ—‘ï¸ Removing TOP...",
             convertToSnapshots(),
             poppedNode.getNodeId(),
             Map.of("removed", poppedNode.getFile().getFilename())
@@ -132,7 +132,7 @@ public class FileStack {
         
         steps.add(new VisualizationStep(
             "POP_COMPLETE",
-            "✅ POPPED: " + poppedNode.getFile().getFilename() + " | Size: " + stack.size(),
+            "âœ… POPPED: " + poppedNode.getFile().getFilename() + " | Size: " + stack.size(),
             convertToSnapshots(),
             null,
             Map.of("popped", poppedNode.getFile().getFilename(), "size", stack.size())
@@ -147,7 +147,7 @@ public class FileStack {
         if (stack.isEmpty()) {
             steps.add(new VisualizationStep(
                 "EMPTY_STACK",
-                "📭 Stack is empty",
+                "ðŸ“­ Stack is empty",
                 convertToSnapshots(),
                 null,
                 Map.of("isEmpty", true)
@@ -159,7 +159,7 @@ public class FileStack {
         
         steps.add(new VisualizationStep(
             "PEEK",
-            "👁️ PEEK - Top: " + topNode.getFile().getFilename(),
+            "ðŸ‘ï¸ PEEK - Top: " + topNode.getFile().getFilename(),
             convertToSnapshots(),
             topNode.getNodeId(),
             Map.of("top", topNode.getFile().getFilename())

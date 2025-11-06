@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Array Visualizer - DSA Visualizer</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+</head>
+<body class="app-page">
+    <!-- Navigation Bar -->
+    <nav class="app-nav">
+        <div class="nav-brand">
+            <a href="index.html">← Back</a>
+            <h2>📊 Array Visualizer</h2>
+        </div>
+        <div class="nav-stats" id="nav-stats">
+            <span>Files: <strong id="file-count">0</strong></span>
+            <span>Capacity: <strong id="array-capacity">10</strong></span>
+            <span>Free Slots: <strong id="free-slots">10</strong></span>
+        </div>
+    </nav>
+
+    <div class="app-container">
+        <!-- Left Panel - Controls -->
+        <aside class="control-panel">
+            <!-- Insert/Upload -->
+            <div class="panel-section">
+                <h3>📤 Insert File</h3>
+                <div class="upload-zone" id="upload-zone">
+                    <input type="file" id="file-input" hidden>
+                    <div class="upload-content">
+                        <span class="upload-icon">📁</span>
+                        <p>Click or drag file here</p>
+                        <small>Max 10MB</small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="insert-index">Insert at Index:</label>
+                    <input type="number" id="insert-index" class="input-field" min="0" max="9" value="0">
+                </div>
+                <button class="btn btn-primary btn-block" id="insert-btn">Insert</button>
+            </div>
+
+            <!-- Search -->
+            <div class="panel-section">
+                <h3>🔍 Search File</h3>
+                <input type="text" id="search-input" placeholder="Enter filename..." class="input-field">
+                <button class="btn btn-success btn-block" id="search-btn">Search</button>
+            </div>
+
+            <!-- Access -->
+            <div class="panel-section">
+                <h3>⚡ Access Element</h3>
+                <div class="form-group">
+                    <label for="access-index">Index:</label>
+                    <input type="number" id="access-index" class="input-field" min="0" max="9" value="0">
+                </div>
+                <button class="btn btn-info btn-block" id="access-btn">Access</button>
+            </div>
+
+            <!-- Delete -->
+            <div class="panel-section">
+                <h3>🗑️ Delete Element</h3>
+                <div class="form-group">
+                    <label for="delete-index">Index:</label>
+                    <input type="number" id="delete-index" class="input-field" min="0" max="9" value="0">
+                </div>
+                <button class="btn btn-danger btn-block" id="delete-btn">Delete</button>
+            </div>
+
+            <!-- Resize / Quick Actions -->
+            <div class="panel-section">
+                <h3>⚙️ Manage Array</h3>
+                <div class="form-group">
+                    <label for="capacity-input">Resize Array:</label>
+                    <input type="number" id="capacity-input" class="input-field" min="5" max="20" value="10">
+                </div>
+                <button class="btn btn-outline btn-block" id="resize-btn">Resize</button>
+                <button class="btn btn-outline btn-block" id="refresh-btn">Refresh State</button>
+                <button class="btn btn-outline btn-block" id="clear-btn">Clear Array</button>
+            </div>
+
+            <!-- Connection Indicator -->
+            <div class="panel-section connection-status">
+                <div id="connection-indicator" class="status-dot connecting"></div>
+                <span id="connection-text">Connecting...</span>
+            </div>
+        </aside>
+
+        <!-- Center Visualization Panel -->
+        <main class="visualization-panel">
+            <div class="canvas-header">
+                <h3>Visual Representation</h3>
+                <div class="canvas-controls">
+                    <button class="btn-icon" id="zoom-in">🔍+</button>
+                    <button class="btn-icon" id="zoom-out">🔍-</button>
+                    <button class="btn-icon" id="reset-view">⛶</button>
+                </div>
+            </div>
+
+            <div class="canvas-wrapper">
+                <div class="array-canvas-container" id="array-container">
+                    <div class="array-indices" id="array-indices"></div>
+                    <div class="array-elements" id="array-elements"></div>
+                </div>
+                <div class="canvas-overlay" id="empty-state">
+                    <div class="empty-content">
+                        <span class="empty-icon">📭</span>
+                        <h3>Empty Array</h3>
+                        <p>Insert files to see array visualization!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="operation-panel">
+                <div class="operation-header">
+                    <span class="operation-title">Current Operation</span>
+                    <span class="operation-progress" id="operation-progress">Step 0/0</span>
+                </div>
+                <div class="operation-description" id="operation-description">
+                    <p>Waiting for operation...</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Code Panel -->
+        <aside class="code-panel">
+            <div class="code-header">
+                <h3>💻 Java Code</h3>
+                <button class="btn-icon" id="toggle-code">📌</button>
+            </div>
+
+            <div class="code-tabs">
+                <button class="code-tab active" data-code="insert">Insert</button>
+                <button class="code-tab" data-code="search">Search</button>
+                <button class="code-tab" data-code="delete">Delete</button>
+                <button class="code-tab" data-code="access">Access</button>
+            </div>
+
+            <div class="code-content">
+                <pre id="code-display"><code class="language-java">// Select an operation to view code
+public class FileArray {
+    private File[] array;
+    private int size;
+    private int capacity;
+}</code></pre>
+            </div>
+
+            <div class="code-highlight">
+                <span class="highlight-label">Executing:</span>
+                <code id="current-line">-</code>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span class="toast-icon" id="toast-icon">ℹ️</span>
+        <span class="toast-message" id="toast-message">Notification</span>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/array-visualizer.js"></script>
+    <script src="js/array-manager.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const visualizer = new ArrayVisualizer();
+            const manager = new ArrayManager();
+            console.log('✅ Array Visualizer Initialized');
+        });
+    </script>
+</body>
+</html>
