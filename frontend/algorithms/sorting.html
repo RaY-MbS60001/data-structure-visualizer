@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorting Algorithms Visualizer</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+</head>
+<body class="app-page">
+    <nav class="app-nav">
+        <div class="nav-brand">
+            <a href="../index.html">← Back</a>
+            <h2>📊 Sorting Algorithms</h2>
+        </div>
+        <div class="nav-stats">
+            <span>Algorithm: <strong id="current-algorithm">Bubble Sort</strong></span>
+            <span>Comparisons: <strong id="comparisons">0</strong></span>
+            <span>Swaps: <strong id="swaps">0</strong></span>
+        </div>
+    </nav>
+
+    <div class="app-container">
+        <aside class="control-panel">
+            <div class="panel-section">
+                <h3>🎯 Select Algorithm</h3>
+                <select class="input-field" id="algorithm-select">
+                    <option value="bubble">Bubble Sort</option>
+                    <option value="quick">Quick Sort</option>
+                    <option value="merge">Merge Sort</option>
+                    <option value="insertion">Insertion Sort</option>
+                    <option value="selection">Selection Sort</option>
+                </select>
+            </div>
+
+            <div class="panel-section">
+                <h3>📊 Array Settings</h3>
+                <label>Array Size: <span id="size-value">20</span></label>
+                <input type="range" class="input-field" id="array-size" min="5" max="50" value="20">
+                <button class="btn btn-primary btn-block" id="generate-btn">
+                    Generate Random Array
+                </button>
+                <button class="btn btn-outline btn-block" id="generate-sorted-btn">
+                    Generate Sorted Array
+                </button>
+                <button class="btn btn-outline btn-block" id="generate-reverse-btn">
+                    Generate Reverse Sorted
+                </button>
+            </div>
+
+            <div class="panel-section">
+                <h3>⚡ Controls</h3>
+                <button class="btn btn-success btn-block" id="start-btn">
+                    <span id="start-btn-text">Start Sorting</span>
+                </button>
+                <button class="btn btn-warning btn-block" id="pause-btn">
+                    <span id="pause-btn-text">Pause</span>
+                </button>
+                <button class="btn btn-danger btn-block" id="stop-btn">
+                    Stop
+                </button>
+            </div>
+
+            <div class="panel-section">
+                <h3>🎛️ Speed Control</h3>
+                <label>Speed: <span id="speed-value">50</span>%</label>
+                <input type="range" class="input-field" id="speed-control" min="1" max="100" value="50">
+            </div>
+
+            <div class="panel-section connection-status">
+                <div id="connection-indicator" class="status-dot connecting"></div>
+                <span id="connection-text">Connecting...</span>
+            </div>
+        </aside>
+
+        <main class="visualization-panel">
+            <div class="canvas-header">
+                <h3>Sorting Visualization</h3>
+                <div class="canvas-controls">
+                    <span class="operation-badge" id="status-badge">Ready</span>
+                </div>
+            </div>
+            
+            <div class="canvas-wrapper">
+                <canvas id="visualization-canvas"></canvas>
+                <div class="canvas-overlay" id="empty-state" class="hidden">
+                    <div class="empty-content">
+                        <span class="empty-icon">📊</span>
+                        <h3>Ready to Sort</h3>
+                        <p>Generate an array to start visualizing!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="operation-panel">
+                <div class="operation-header">
+                    <span class="operation-title">Algorithm Complexity</span>
+                </div>
+                <div class="operation-description">
+                    <p>Time Complexity: <strong id="time-complexity">O(n²)</strong></p>
+                    <p>Space Complexity: <strong id="space-complexity">O(1)</strong></p>
+                    <p>Best Case: <strong id="best-case">O(n)</strong></p>
+                    <p>Worst Case: <strong id="worst-case">O(n²)</strong></p>
+                </div>
+            </div>
+        </main>
+
+        <aside class="code-panel">
+            <div class="code-header">
+                <h3>💻 Algorithm Code</h3>
+            </div>
+            
+            <div class="code-content">
+                <pre id="code-display"><code>// Bubble Sort
+public void bubbleSort(int[] arr) {
+    int n = arr.length;
+    
+    for (int i = 0; i < n-1; i++) {
+        boolean swapped = false;
+        
+        for (int j = 0; j < n-i-1; j++) {
+            if (arr[j] > arr[j+1]) {
+                // Swap elements
+                int temp = arr[j];
+                arr[j] = arr[j+1];
+                arr[j+1] = temp;
+                swapped = true;
+            }
+        }
+        
+        // If no swapping occurred, array is sorted
+        if (!swapped) break;
+    }
+}</code></pre>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/core/websocket-handler.js"></script>
+    <script src="../js/core/visualizer-base.js"></script>
+    <script src="../js/core/animation-engine.js"></script>
+    <script src="../js/algorithms/sorting-visualizer.js"></script>
+    <script>
+        // Sorting Manager
+        class SortingManager {
+            constructor() {
+                this.visualizer = new SortingVisualizer('visualization-canvas');
+                this.currentAlgorithm = 'bubble';
+                this.setupEventListeners();
+                this.updateComplexity();
+            }
+            
+            setupEventListeners() {
+                // Algorithm selection
+                document.getElementById('algorithm-select').addEventListener('change', (e) => {
+                    this.currentAlgorithm = e.target.value;
+                    document.getElementById('current-algorithm').textContent = 
+                        e.target.options[e.target.selectedIndex].text;
+                    this.updateComplexity();
+                    this.updateCode();
+                });
+                
+                // Array size
+                const sizeSlider = document.getElementById('array-size');
+                sizeSlider.addEventListener('input', () => {
+                    document.getElementById('size-value').textContent = sizeSlider.value;
+                });
+                
+                // Speed control
+                const speedSlider = document.getElementById('speed-control');
+                speedSlider.addEventListener('input', () => {
+                    document.getElementById('speed-value').textContent = speedSlider.value;
+                    this.visualizer.setSpeed(parseInt(speedSlider.value));
+                });
+                
+                // Generate buttons
+                document.getElementById('generate-btn').addEventListener('click', () => {
+                    const size = parseInt(sizeSlider.value);
+                    this.visualizer.generateRandomArray(size);
+                });
+                
+                document.getElementById('generate-sorted-btn').addEventListener('click', () => {
+                    this.visualizer.generateSortedArray(false);
+                });
+                
+                document.getElementById('generate-reverse-btn').addEventListener('click', () => {
+                    this.visualizer.generateSortedArray(true);
+                });
+                
+                // Control buttons
+                document.getElementById('start-btn').addEventListener('click', () => {
+                    this.start();
+                });
+                
+                document.getElementById('pause-btn').addEventListener('click', () => {
+                    this.pause();
+                });
+                
+                document.getElementById('stop-btn').addEventListener('click', () => {
+                    this.stop();
+                });
+            }
+            
+            async start() {
+                if (this.visualizer.isRunning) return;
+                
+                document.getElementById('start-btn').disabled = true;
+                document.getElementById('status-badge').textContent = 'Sorting...';
+                document.getElementById('status-badge').className = 'operation-badge sorting';
+                
+                await this.visualizer.start(this.currentAlgorithm);
+                
+                document.getElementById('start-btn').disabled = false;
+                document.getElementById('status-badge').textContent = 'Complete';
+                document.getElementById('status-badge').className = 'operation-badge complete';
+            }
+            
+            pause() {
+                this.visualizer.pause();
+                const btn = document.getElementById('pause-btn');
+                const text = document.getElementById('pause-btn-text');
+                
+                if (this.visualizer.isPaused) {
+                    text.textContent = 'Resume';
+                    btn.classList.remove('btn-warning');
+                    btn.classList.add('btn-success');
+                } else {
+                    text.textContent = 'Pause';
+                    btn.classList.remove('btn-success');
+                    btn.classList.add('btn-warning');
+                }
+            }
+            
+            stop() {
+                this.visualizer.stop();
+                document.getElementById('start-btn').disabled = false;
+                document.getElementById('status-badge').textContent = 'Stopped';
+                document.getElementById('status-badge').className = 'operation-badge stopped';
+            }
+            
+            updateComplexity() {
+                const complexities = {
+                    'bubble': {
+                        time: 'O(n²)',
+                        space: 'O(1)',
+                        best: 'O(n)',
+                        worst: 'O(n²)'
+                    },
+                    'quick': {
+                        time: 'O(n log n)',
+                        space: 'O(log n)',
+                        best: 'O(n log n)',
+                        worst: 'O(n²)'
+                    },
+                    'merge': {
+                        time: 'O(n log n)',
+                        space: 'O(n)',
+                        best: 'O(n log n)',
+                        worst: 'O(n log n)'
+                    },
+                    'insertion': {
+                        time: 'O(n²)',
+                        space: 'O(1)',
+                        best: 'O(n)',
+                        worst: 'O(n²)'
+                    },
+                    'selection': {
+                        time: 'O(n²)',
+                        space: 'O(1)',
+                        best: 'O(n²)',
+                        worst: 'O(n²)'
+                    }
+                };
+                
+                const complexity = complexities[this.currentAlgorithm];
+                document.getElementById('time-complexity').textContent = complexity.time;
+                document.getElementById('space-complexity').textContent = complexity.space;
+                document.getElementById('best-case').textContent = complexity.best;
+                document.getElementById('worst-case').textContent = complexity.worst;
+            }
+            
+            updateCode() {
+                const codes = {
+                    'bubble': `// Bubble Sort
+public void bubbleSort(int[] arr) {
+    int n = arr.length;
+    
+    for (int i = 0; i < n-1; i++) {
+        boolean swapped = false;
+        
+        for (int j = 0; j < n-i-1; j++) {
+            if (arr[j] > arr[j+1]) {
+                // Swap elements
+                int temp = arr[j];
+                arr[j] = arr[j+1];
+                arr[j+1] = temp;
+                swapped = true;
+            }
+        }
+        
+        // If no swapping occurred, array is sorted
+        if (!swapped) break;
+    }
+}`,
+                    'quick': `// Quick Sort
+public void quickSort(int[] arr, int low, int high) {
+    if (low < high) {
+        int pi = partition(arr, low, high);
+        
+        quickSort(arr, low, pi - 1);
+        quickSort(arr, pi + 1, high);
+    }
+}
+
+private int partition(int[] arr, int low, int high) {
+    int pivot = arr[high];
+    int i = (low - 1);
+    
+    for (int j = low; j < high; j++) {
+        if (arr[j] < pivot) {
+            i++;
+            int temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+        }
+    }
+    
+    int temp = arr[i + 1];
+    arr[i + 1] = arr[high];
+    arr[high] = temp;
+    
+    return i + 1;
+}`,
+                    'insertion': `// Insertion Sort
+public void insertionSort(int[] arr) {
+    int n = arr.length;
+    
+    for (int i = 1; i < n; ++i) {
+        int key = arr[i];
+        int j = i - 1;
+        
+        // Move elements greater than key one position ahead
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j = j - 1;
+        }
+        
+        arr[j + 1] = key;
+    }
+}`,
+                    'selection': `// Selection Sort
+public void selectionSort(int[] arr) {
+    int n = arr.length;
+    
+    for (int i = 0; i < n-1; i++) {
+        // Find the minimum element in unsorted array
+        int minIdx = i;
+        
+        for (int j = i+1; j < n; j++) {
+            if (arr[j] < arr[minIdx]) {
+                minIdx = j;
+            }
+        }
+        
+        // Swap the minimum element with the first element
+        int temp = arr[minIdx];
+        arr[minIdx] = arr[i];
+        arr[i] = temp;
+    }
+}`
+                };
+                
+                document.getElementById('code-display').innerHTML = `<code>${codes[this.currentAlgorithm] || ''}</code>`;
+            }
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            const manager = new SortingManager();
+            console.log('✅ Sorting Visualizer Initialized');
+        });
+    </script>
+</body>
+</html>

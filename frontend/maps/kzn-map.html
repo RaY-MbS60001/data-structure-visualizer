@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KwaZulu-Natal Route Finder</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        .route-alert {
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            animation: slideIn 0.3s ease;
+        }
+        
+        .route-alert.success {
+            background: rgba(0, 255, 136, 0.2);
+            border: 1px solid var(--success);
+            color: var(--success);
+        }
+        
+        .route-alert.warning {
+            background: rgba(255, 165, 2, 0.2);
+            border: 1px solid var(--warning);
+            color: var(--warning);
+        }
+        
+        .route-alert.error {
+            background: rgba(255, 71, 87, 0.2);
+            border: 1px solid var(--danger);
+            color: var(--danger);
+        }
+        
+        #mapCanvas {
+            cursor: grab;
+        }
+        
+        #mapCanvas:active {
+            cursor: grabbing;
+        }
+        
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+        
+        .status-badge.calculating {
+            background: var(--warning);
+            color: var(--dark);
+        }
+        
+        .status-badge.success {
+            background: var(--success);
+            color: var(--dark);
+        }
+        
+        .status-badge.error {
+            background: var(--danger);
+            color: white;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body class="app-page">
+    <nav class="app-nav">
+        <div class="nav-brand">
+            <a href="map-dashboard.html">← Back to Map Selection</a>
+            <h2>📍 KwaZulu-Natal Routes</h2>
+        </div>
+        <div class="nav-stats">
+            <span class="status-badge" id="route-status">Ready</span>
+        </div>
+    </nav>
+
+    <div class="app-container">
+        <aside class="control-panel">
+            <div class="panel-section">
+                <h3>🚗 Route Settings</h3>
+                <div class="map-controls">
+                    <select class="input-field" id="startCity">
+                        <option value="">Select Start City</option>
+                    </select>
+                    
+                    <select class="input-field" id="endCity">
+                        <option value="">Select Destination</option>
+                    </select>
+                    
+                    <select class="input-field" id="algorithm">
+                        <option value="dijkstra">Dijkstra's Algorithm</option>
+                        <option value="astar">A* Algorithm</option>
+                        <option value="bfs">BFS (All Paths)</option>
+                    </select>
+                    
+                    <button class="btn btn-primary btn-block" id="find-route-btn">
+                        Find Shortest Route
+                    </button>
+                    <button class="btn btn-outline btn-block" id="clear-btn">
+                        Clear Route
+                    </button>
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <h3>📊 Route Information</h3>
+                <div class="route-info">
+                    <p>Distance: <strong id="route-distance">-</strong> km</p>
+                    <p>Estimated Time: <strong id="route-time">-</strong></p>
+                    <p>Nodes Explored: <strong id="nodes-explored">-</strong></p>
+                    <p>Path Length: <strong id="path-length">-</strong></p>
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <h3>🛣️ Route Path</h3>
+                <div class="route-path" id="route-path">
+                    Select cities to see route
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <h3>🎮 Controls</h3>
+                <p>• Click on cities to select them</p>
+                <p>• Drag to pan the map</p>
+                <p>• Scroll to zoom in/out</p>
+            </div>
+
+            <div class="panel-section connection-status">
+                <div id="connection-indicator" class="status-dot connecting"></div>
+                <span id="connection-text">Connecting...</span>
+            </div>
+        </aside>
+
+        <main class="visualization-panel">
+            <div class="canvas-header">
+                <h3>KwaZulu-Natal Map</h3>
+                <div class="canvas-controls">
+                    <button class="btn btn-icon" onclick="mapManager.visualizer.fitMapToCanvas(); mapManager.visualizer.redraw()">🎯</button>
+                </div>
+            </div>
+            
+            <div class="canvas-wrapper">
+                <canvas id="mapCanvas"></canvas>
+            </div>
+
+            <div class="operation-panel">
+                <div class="operation-header">
+                    <span class="operation-title">Algorithm Comparison</span>
+                </div>
+                <div class="operation-description">
+                    <p><strong>Dijkstra:</strong> Guarantees shortest path, explores uniformly</p>
+                    <p><strong>A*:</strong> Faster with heuristic, still optimal</p>
+                    <p><strong>BFS:</strong> Finds path with minimum hops</p>
+                </div>
+            </div>
+        </main>
+
+        <aside class="code-panel">
+            <div class="code-header">
+                <h3>💻 Algorithm Implementation</h3>
+            </div>
+            
+            <div class="code-tabs">
+                <button class="code-tab active" onclick="showAlgorithmCode('dijkstra')">Dijkstra</button>
+                <button class="code-tab" onclick="showAlgorithmCode('astar')">A*</button>
+                <button class="code-tab" onclick="showAlgorithmCode('bfs')">BFS</button>
+            </div>
+            
+            <div class="code-content">
+                <pre id="code-display"><code>// Dijkstra's Algorithm
+public Map<String, Integer> dijkstra(Graph graph, String start) {
+    Map<String, Integer> distances = new HashMap<>();
+    Map<String, String> previous = new HashMap<>();
+    PriorityQueue<Node> pq = new PriorityQueue<>();
+    
+    // Initialize distances
+    for (String node : graph.getNodes()) {
+        distances.put(node, Integer.MAX_VALUE);
+    }
+    distances.put(start, 0);
+    pq.offer(new Node(start, 0));
+    
+    while (!pq.isEmpty()) {
+        Node current = pq.poll();
+        
+        if (current.distance > distances.get(current.id)) {
+            continue;
+        }
+        
+        // Check all neighbors
+        for (Edge edge : graph.getEdges(current.id)) {
+            int newDist = distances.get(current.id) + edge.weight;
+            
+            if (newDist < distances.get(edge.target)) {
+                distances.put(edge.target, newDist);
+                previous.put(edge.target, current.id);
+                pq.offer(new Node(edge.target, newDist));
+            }
+        }
+    }
+    
+    return distances;
+}</code></pre>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/core/websocket-handler.js"></script>
+    <script src="../js/core/visualizer-base.js"></script>
+    <script src="../js/core/animation-engine.js"></script>
+    <script src="../js/maps/map-visualizer.js"></script>
+    <script src="../js/maps/map-manager.js"></script>
+    <script>
+        // Initialize map
+        document.addEventListener('DOMContentLoaded', () => {
+            mapManager.loadMap('kzn');
+            console.log('✅ KZN Map Initialized');
+        });
+        
+        // Algorithm code display
+        function showAlgorithmCode(algorithm) {
+            const codes = {
+                'dijkstra': `// Dijkstra's Algorithm
+public Map<String, Integer> dijkstra(Graph graph, String start) {
+    Map<String, Integer> distances = new HashMap<>();
+    Map<String, String> previous = new HashMap<>();
+    PriorityQueue<Node> pq = new PriorityQueue<>();
+    
+    // Initialize distances
+    for (String node : graph.getNodes()) {
+        distances.put(node, Integer.MAX_VALUE);
+    }
+    distances.put(start, 0);
+    pq.offer(new Node(start, 0));
+    
+    while (!pq.isEmpty()) {
+        Node current = pq.poll();
+        
+        if (current.distance > distances.get(current.id)) {
+            continue;
+        }
+        
+        // Check all neighbors
+        for (Edge edge : graph.getEdges(current.id)) {
+            int newDist = distances.get(current.id) + edge.weight;
+            
+            if (newDist < distances.get(edge.target)) {
+                distances.put(edge.target, newDist);
+                previous.put(edge.target, current.id);
+                pq.offer(new Node(edge.target, newDist));
+            }
+        }
+    }
+    
+    return distances;
+}`,
+                'astar': `// A* Algorithm
+public List<String> aStar(Graph graph, String start, String goal) {
+    Map<String, Double> gScore = new HashMap<>();
+    Map<String, Double> fScore = new HashMap<>();
+    Map<String, String> cameFrom = new HashMap<>();
+    PriorityQueue<Node> openSet = new PriorityQueue<>(
+        (a, b) -> Double.compare(fScore.get(a.id), fScore.get(b.id))
+    );
+    
+    // Initialize scores
+    for (String node : graph.getNodes()) {
+        gScore.put(node, Double.POSITIVE_INFINITY);
+        fScore.put(node, Double.POSITIVE_INFINITY);
+    }
+    
+    gScore.put(start, 0.0);
+    fScore.put(start, heuristic(start, goal));
+    openSet.offer(new Node(start, 0));
+    
+    while (!openSet.isEmpty()) {
+        Node current = openSet.poll();
+        
+        if (current.id.equals(goal)) {
+            return reconstructPath(cameFrom, current.id);
+        }
+        
+        for (Edge edge : graph.getEdges(current.id)) {
+            double tentativeGScore = gScore.get(current.id) + edge.weight;
+            
+            if (tentativeGScore < gScore.get(edge.target)) {
+                cameFrom.put(edge.target, current.id);
+                gScore.put(edge.target, tentativeGScore);
+                fScore.put(edge.target, tentativeGScore + heuristic(edge.target, goal));
+                openSet.offer(new Node(edge.target, tentativeGScore));
+            }
+        }
+    }
+    
+    return Collections.emptyList(); // No path found
+}`,
+                'bfs': `// BFS Pathfinding
+public List<String> bfs(Graph graph, String start, String goal) {
+    Queue<String> queue = new LinkedList<>();
+    Map<String, String> cameFrom = new HashMap<>();
+    Set<String> visited = new HashSet<>();
+    
+    queue.offer(start);
+    visited.add(start);
+    
+    while (!queue.isEmpty()) {
+        String current = queue.poll();
+        
+        if (current.equals(goal)) {
+            return reconstructPath(cameFrom, goal);
+        }
+        
+        for (Edge edge : graph.getEdges(current)) {
+            if (!visited.contains(edge.target)) {
+                visited.add(edge.target);
+                cameFrom.put(edge.target, current);
+                queue.offer(edge.target);
+            }
+        }
+    }
+    
+    return Collections.emptyList(); // No path found
+}`
+            };
+            
+            document.getElementById('code-display').innerHTML = `<code>${codes[algorithm]}</code>`;
+            
+            // Update tab styling
+            document.querySelectorAll('.code-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>

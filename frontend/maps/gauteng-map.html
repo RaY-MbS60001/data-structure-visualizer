@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gauteng Route Finder</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        /* Same styles as KZN map */
+        .route-alert {
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            animation: slideIn 0.3s ease;
+        }
+        
+        .route-alert.success {
+            background: rgba(0, 255, 136, 0.2);
+            border: 1px solid var(--success);
+            color: var(--success);
+        }
+        
+        .route-alert.warning {
+            background: rgba(255, 165, 2, 0.2);
+            border: 1px solid var(--warning);
+            color: var(--warning);
+        }
+        
+        .route-alert.error {
+            background: rgba(255, 71, 87, 0.2);
+            border: 1px solid var(--danger);
+            color: var(--danger);
+        }
+        
+        #mapCanvas {
+            cursor: grab;
+        }
+        
+        #mapCanvas:active {
+            cursor: grabbing;
+        }
+    </style>
+</head>
+<body class="app-page">
+    <nav class="app-nav">
+        <div class="nav-brand">
+            <a href="map-dashboard.html">← Back to Map Selection</a>
+            <h2>🏙️ Gauteng Routes</h2>
+        </div>
+        <div class="nav-stats">
+            <span class="status-badge" id="route-status">Ready</span>
+        </div>
+    </nav>
+
+    <!-- Same structure as KZN map but with Gauteng cities -->
+    <div class="app-container">
+        <!-- Copy the same structure from KZN map -->
+        <aside class="control-panel">
+            <div class="panel-section">
+                <h3>🚗 Route Settings</h3>
+                <div class="map-controls">
+                    <select class="input-field" id="startCity">
+                        <option value="">Select Start City</option>
+                    </select>
+                    
+                    <select class="input-field" id="endCity">
+                        <option value="">Select Destination</option>
+                    </select>
+                    
+                    <select class="input-field" id="algorithm">
+                        <option value="dijkstra">Dijkstra's Algorithm</option>
+                        <option value="astar">A* Algorithm</option>
+                        <option value="bfs">BFS (All Paths)</option>
+                    </select>
+                    
+                    <button class="btn btn-primary btn-block" id="find-route-btn">
+                        Find Shortest Route
+                    </button>
+                    <button class="btn btn-outline btn-block" id="clear-btn">
+                        Clear Route
+                    </button>
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <h3>📊 Route Information</h3>
+                <div class="route-info">
+                    <p>Distance: <strong id="route-distance">-</strong> km</p>
+                    <p>Estimated Time: <strong id="route-time">-</strong></p>
+                    <p>Nodes Explored: <strong id="nodes-explored">-</strong></p>
+                    <p>Path Length: <strong id="path-length">-</strong></p>
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <h3>🛣️ Route Path</h3>
+                <div class="route-path" id="route-path">
+                    Select cities to see route
+                </div>
+            </div>
+        </aside>
+
+        <main class="visualization-panel">
+            <div class="canvas-header">
+                <h3>Gauteng Map</h3>
+                <div class="canvas-controls">
+                    <button class="btn btn-icon" onclick="mapManager.visualizer.fitMapToCanvas(); mapManager.visualizer.redraw()">🎯</button>
+                </div>
+            </div>
+            
+            <div class="canvas-wrapper">
+                <canvas id="mapCanvas"></canvas>
+            </div>
+        </main>
+
+        <aside class="code-panel">
+            <div class="code-header">
+                <h3>💻 Algorithm Implementation</h3>
+            </div>
+            
+            <div class="code-content">
+                <pre id="code-display"><code>// Algorithm code displays here</code></pre>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/core/websocket-handler.js"></script>
+    <script src="../js/core/visualizer-base.js"></script>
+    <script src="../js/core/animation-engine.js"></script>
+    <script src="../js/maps/map-visualizer.js"></script>
+    <script src="../js/maps/map-manager.js"></script>
+    <script>
+        // Initialize map
+        document.addEventListener('DOMContentLoaded', () => {
+            mapManager.loadMap('gauteng');
+            console.log('✅ Gauteng Map Initialized');
+        });
+    </script>
+</body>
+</html>

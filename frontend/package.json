@@ -1,0 +1,16 @@
+{
+  "name": "data-structure-visualizer-frontend",
+  "version": "1.0.0",
+  "description": "Frontend for Data Structure Visualizer",
+  "main": "index.html",
+  "scripts": {
+    "start": "live-server --port=3000",
+    "dev": "live-server --port=3000 --watch=."
+  },
+  "keywords": ["data-structures", "algorithms", "visualization"],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  }
+}

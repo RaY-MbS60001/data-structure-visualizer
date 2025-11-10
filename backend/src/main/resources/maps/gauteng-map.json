@@ -1,0 +1,16 @@
+{
+    "nodes": [
+        {"id": "jhb", "label": "Johannesburg", "x": 400, "y": 300, "lat": -26.2041, "lon": 28.0473},
+        {"id": "pta", "label": "Pretoria", "x": 400, "y": 200, "lat": -25.7479, "lon": 28.2293},
+        {"id": "sandton", "label": "Sandton", "x": 420, "y": 280, "lat": -26.1076, "lon": 28.0567},
+        {"id": "soweto", "label": "Soweto", "x": 350, "y": 330, "lat": -26.2678, "lon": 27.8585},
+        {"id": "kempton", "label": "Kempton Park", "x": 450, "y": 290, "lat": -26.1077, "lon": 28.2294}
+    ],
+    "edges": [
+        {"id": "e1", "source": "jhb", "target": "pta", "weight": 60, "distance": 60, "roadName": "N1"},
+        {"id": "e2", "source": "jhb", "target": "sandton", "weight": 15, "distance": 15, "roadName": "M1"},
+        {"id": "e3", "source": "jhb", "target": "soweto", "weight": 20, "distance": 20, "roadName": "M70"},
+        {"id": "e4", "source": "sandton", "target": "pta", "weight": 50, "distance": 50, "roadName": "N1"},
+        {"id": "e5", "source": "jhb", "target": "kempton", "weight": 25, "distance": 25, "roadName": "R24"}
+    ]
+}

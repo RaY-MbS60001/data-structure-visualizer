@@ -1,0 +1,15 @@
+{
+    "nodes": [
+        {"id": "durban", "label": "Durban", "x": 400, "y": 300, "lat": -29.8587, "lon": 31.0218},
+        {"id": "pmb", "label": "Pietermaritzburg", "x": 350, "y": 250, "lat": -29.6006, "lon": 30.3794},
+        {"id": "richards", "label": "Richards Bay", "x": 450, "y": 150, "lat": -28.7610, "lon": 32.0379},
+        {"id": "newcastle", "label": "Newcastle", "x": 250, "y": 100, "lat": -27.7576, "lon": 29.9318},
+        {"id": "ladysmith", "label": "Ladysmith", "x": 300, "y": 180, "lat": -28.5592, "lon": 29.7819}
+    ],
+    "edges": [
+        {"id": "e1", "source": "durban", "target": "pmb", "weight": 80, "distance": 80, "roadName": "N3"},
+        {"id": "e2", "source": "durban", "target": "richards", "weight": 170, "distance": 170, "roadName": "N2"},
+        {"id": "e3", "source": "pmb", "target": "ladysmith", "weight": 160, "distance": 160, "roadName": "N3"},
+        {"id": "e4", "source": "ladysmith", "target": "newcastle", "weight": 100, "distance": 100, "roadName": "N11"}
+    ]
+}

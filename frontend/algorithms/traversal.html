@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tree & Graph Traversal</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        #traversal-order {
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            color: var(--primary);
+            padding: 1rem;
+            background: rgba(0, 255, 136, 0.1);
+            border-radius: 8px;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body class="app-page">
+    <nav class="app-nav">
+        <div class="nav-brand">
+            <a href="../index.html">← Back</a>
+            <h2>🌳 Tree & Graph Traversal</h2>
+        </div>
+        <div class="nav-stats">
+            <span>Structure: <strong id="current-structure">Binary Tree</strong></span>
+            <span>Algorithm: <strong id="current-algorithm">BFS</strong></span>
+            <span>Nodes Visited: <strong id="nodes-visited">0</strong></span>
+        </div>
+    </nav>
+
+    <div class="app-container">
+        <aside class="control-panel">
+            <div class="panel-section">
+                <h3>🎯 Select Structure</h3>
+                <select class="input-field" id="structure-select">
+                    <option value="tree">Binary Tree</option>
+                    <option value="graph">Graph</option>
+                </select>
+            </div>
+
+            <div class="panel-section">
+                <h3>📊 Traversal Algorithm</h3>
+                <select class="input-field" id="algorithm-select">
+                    <option value="bfs">BFS (Breadth-First Search)</option>
+                    <option value="dfs">DFS (Depth-First Search)</option>
+                    <option value="inorder" class="tree-only">In-order (Tree Only)</option>
+                    <option value="preorder" class="tree-only">Pre-order (Tree Only)</option>
+                    <option value="postorder" class="tree-only">Post-order (Tree Only)</option>
+                </select>
+            </div>
+
+            <div class="panel-section">
+                <h3>⚡ Controls</h3>
+                <button class="btn btn-primary btn-block" id="start-btn">
+                    Start Traversal
+                </button>
+                <button class="btn btn-danger btn-block" id="stop-btn">
+                    Stop
+                </button>
+                <button class="btn btn-outline btn-block" id="reset-btn">
+                    Reset
+                </button>
+            </div>
+
+            <div class="panel-section">
+                <h3>🎛️ Speed Control</h3>
+                <label>Speed: <span id="speed-value">50</span>%</label>
+                <input type="range" class="input-field" id="speed-control" min="1" max="100" value="50">
+            </div>
+
+            <div class="panel-section">
+                <h3>📝 Traversal Order</h3>
+                <div id="traversal-order">-</div>
+            </div>
+
+            <div class="panel-section connection-status">
+                <div id="connection-indicator" class="status-dot connecting"></div>
+                <span id="connection-text">Connecting...</span>
+            </div>
+        </aside>
+
+        <main class="visualization-panel">
+            <div class="canvas-header">
+                <h3>Traversal Visualization</h3>
+                <div class="canvas-controls">
+                    <span class="operation-badge" id="status-badge">Ready</span>
+                </div>
+            </div>
+            
+            <div class="canvas-wrapper">
+                <canvas id="visualization-canvas"></canvas>
+            </div>
+
+            <div class="operation-panel">
+                <div class="operation-header">
+                    <span class="operation-title">Algorithm Info</span>
+                </div>
+                <div class="operation-description" id="algorithm-info">
+                    <p><strong>BFS:</strong> Explores all nodes at the current depth before moving to the next depth level.</p>
+                    <p>• Uses a queue data structure</p>
+                    <p>• Good for finding shortest path in unweighted graphs</p>
+                    <p>• Time Complexity: O(V + E)</p>
+                </div>
+            </div>
+        </main>
+
+        <aside class="code-panel">
+            <div class="code-header">
+                <h3>💻 Traversal Code</h3>
+            </div>
+            
+            <div class="code-content">
+                <pre id="code-display"><code>// BFS Traversal
+public void bfs(Node root) {
+    if (root == null) return;
+    
+    Queue<Node> queue = new LinkedList<>();
+    Set<Node> visited = new HashSet<>();
+    
+    queue.offer(root);
+    visited.add(root);
+    
+    while (!queue.isEmpty()) {
+        Node current = queue.poll();
+        System.out.print(current.value + " ");
+        
+        // Add unvisited neighbors to queue
+        for (Node neighbor : current.neighbors) {
+            if (!visited.contains(neighbor)) {
+                visited.add(neighbor);
+                queue.offer(neighbor);
+            }
+        }
+    }
+}</code></pre>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/core/websocket-handler.js"></script>
+    <script src="../js/core/visualizer-base.js"></script>
+    <script src="../js/core/animation-engine.js"></script>
+    <script src="../js/algorithms/traversal-visualizer.js"></script>
+    <script>
+        // Traversal Manager
+        class TraversalManager {
+            constructor() {
+                this.visualizer = new TraversalVisualizer('visualization-canvas');
+                this.currentStructure = 'tree';
+                this.currentAlgorithm = 'bfs';
+                this.setupEventListeners();
+                this.updateAlgorithmInfo();
+            }
+            
+            setupEventListeners() {
+                // Structure selection
+                document.getElementById('structure-select').addEventListener('change', (e) => {
+                    this.currentStructure = e.target.value;
+                    document.getElementById('current-structure').textContent = 
+                        e.target.value === 'tree' ? 'Binary Tree' : 'Graph';
+                    
+                    if (e.target.value === 'tree') {
+                        this.visualizer.buildSampleTree();
+                        document.querySelectorAll('.tree-only').forEach(option => {
+                            option.disabled = false;
+                        });
+                    } else {
+                        this.visualizer.buildSampleGraph();
+                        document.querySelectorAll('.tree-only').forEach(option => {
+                            option.disabled = true;
+                        });
+                        // If current algorithm is tree-only, switch to BFS
+                        if (['inorder', 'preorder', 'postorder'].includes(this.currentAlgorithm)) {
+                            document.getElementById('algorithm-select').value = 'bfs';
+                            this.currentAlgorithm = 'bfs';
+                        }
+                    }
+                    
+                    this.updateAlgorithmInfo();
+                });
+                
+                // Algorithm selection
+                document.getElementById('algorithm-select').addEventListener('change', (e) => {
+                    this.currentAlgorithm = e.target.value;
+                    document.getElementById('current-algorithm').textContent = 
+                        e.target.options[e.target.selectedIndex].text.split(' ')[0];
+                    this.updateAlgorithmInfo();
+                    this.updateCode();
+                });
+                
+                // Control buttons
+                document.getElementById('start-btn').addEventListener('click', () => {
+                    this.start();
+                });
+                
+                document.getElementById('stop-btn').addEventListener('click', () => {
+                    this.stop();
+                });
+                
+                document.getElementById('reset-btn').addEventListener('click', () => {
+                    this.visualizer.reset();
+                    document.getElementById('nodes-visited').textContent = '0';
+                    document.getElementById('status-badge').textContent = 'Ready';
+                    document.getElementById('status-badge').className = 'operation-badge';
+                });
+                
+                // Speed control
+                const speedSlider = document.getElementById('speed-control');
+                speedSlider.addEventListener('input', () => {
+                    document.getElementById('speed-value').textContent = speedSlider.value;
+                    this.visualizer.setSpeed(parseInt(speedSlider.value));
+                });
+                
+                // Update visited count during traversal
+                setInterval(() => {
+                    if (this.visualizer.isRunning) {
+                        document.getElementById('nodes-visited').textContent = 
+                            this.visualizer.traversalOrder.length;
+                    }
+                }, 100);
+            }
+            
+            async start() {
+                if (this.visualizer.isRunning) return;
+                
+                document.getElementById('start-btn').disabled = true;
+                document.getElementById('status-badge').textContent = 'Traversing...';
+                document.getElementById('status-badge').className = 'operation-badge traversing';
+                document.getElementById('nodes-visited').textContent = '0';
+                
+                await this.visualizer.startTraversal(this.currentAlgorithm);
+                
+                document.getElementById('start-btn').disabled = false;
+            }
+            
+            stop() {
+                this.visualizer.isRunning = false;
+                document.getElementById('start-btn').disabled = false;
+                document.getElementById('status-badge').textContent = 'Stopped';
+                document.getElementById('status-badge').className = 'operation-badge stopped';
+            }
+            
+            updateAlgorithmInfo() {
+                const info = {
+                    'bfs': `<p><strong>BFS (Breadth-First Search):</strong> Explores all nodes at the current depth before moving to the next depth level.</p>
+                            <p>• Uses a queue data structure</p>
+                            <p>• Good for finding shortest path in unweighted graphs</p>
+                            <p>• Time Complexity: O(V + E)</p>`,
+                    'dfs': `<p><strong>DFS (Depth-First Search):</strong> Explores as far as possible along each branch before backtracking.</p>
+                            <p>• Uses a stack (or recursion)</p>
+                            <p>• Good for topological sorting, detecting cycles</p>
+                            <p>• Time Complexity: O(V + E)</p>`,
+                    'inorder': `<p><strong>In-order Traversal:</strong> Visit left subtree, then root, then right subtree.</p>
+                                <p>• Gives nodes in sorted order for BST</p>
+                                <p>• Only applies to binary trees</p>
+                                <p>• Time Complexity: O(n)</p>`,
+                    'preorder': `<p><strong>Pre-order Traversal:</strong> Visit root, then left subtree, then right subtree.</p>
+                                 <p>• Used to create a copy of the tree</p>
+                                 <p>• Used to get prefix expression of an expression tree</p>
+                                 <p>• Time Complexity: O(n)</p>`,
+                    'postorder': `<p><strong>Post-order Traversal:</strong> Visit left subtree, then right subtree, then root.</p>
+                                  <p>• Used to delete the tree</p>
+                                  <p>• Used to get postfix expression of an expression tree</p>
+                                  <p>• Time Complexity: O(n)</p>`
+                };
+                
+                document.getElementById('algorithm-info').innerHTML = info[this.currentAlgorithm] || '';
+            }
+            
+            updateCode() {
+                const codes = {
+                    'bfs': `// BFS Traversal
+public void bfs(Node root) {
+    if (root == null) return;
+    
+    Queue<Node> queue = new LinkedList<>();
+    Set<Node> visited = new HashSet<>();
+    
+    queue.offer(root);
+    visited.add(root);
+    
+    while (!queue.isEmpty()) {
+        Node current = queue.poll();
+        System.out.print(current.value + " ");
+        
+        // Add unvisited neighbors to queue
+        for (Node neighbor : current.neighbors) {
+            if (!visited.contains(neighbor)) {
+                visited.add(neighbor);
+                queue.offer(neighbor);
+            }
+        }
+    }
+}`,
+                    'dfs': `// DFS Traversal
+public void dfs(Node node, Set<Node> visited) {
+    if (node == null || visited.contains(node)) {
+        return;
+    }
+    
+    visited.add(node);
+    System.out.print(node.value + " ");
+    
+    // Recursively visit all neighbors
+    for (Node neighbor : node.neighbors) {
+        dfs(neighbor, visited);
+    }
+}`,
+                    'inorder': `// In-order Traversal
+public void inorderTraversal(TreeNode root) {
+    if (root == null) return;
+    
+    // Traverse left subtree
+    inorderTraversal(root.left);
+    
+    // Visit root
+    System.out.print(root.value + " ");
+    
+    // Traverse right subtree
+    inorderTraversal(root.right);
+}`,
+                    'preorder': `// Pre-order Traversal
+public void preorderTraversal(TreeNode root) {
+    if (root == null) return;
+    
+    // Visit root first
+    System.out.print(root.value + " ");
+    
+    // Traverse left subtree
+    preorderTraversal(root.left);
+    
+    // Traverse right subtree
+    preorderTraversal(root.right);
+}`,
+                    'postorder': `// Post-order Traversal
+public void postorderTraversal(TreeNode root) {
+    if (root == null) return;
+    
+    // Traverse left subtree
+    postorderTraversal(root.left);
+    
+    // Traverse right subtree
+    postorderTraversal(root.right);
+    
+    // Visit root last
+    System.out.print(root.value + " ");
+}`
+                };
+                
+                document.getElementById('code-display').innerHTML = `<code>${codes[this.currentAlgorithm] || ''}</code>`;
+            }
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            const manager = new TraversalManager();
+            console.log('✅ Traversal Visualizer Initialized');
+        });
+    </script>
+</body>
+</html>

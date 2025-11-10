@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Searching Algorithms Visualizer</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        .search-result {
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+        }
+        
+        .search-result.found {
+            background: rgba(0, 255, 136, 0.2);
+            border: 2px solid var(--success);
+            color: var(--success);
+        }
+        
+        .search-result.not-found {
+            background: rgba(255, 71, 87, 0.2);
+            border: 2px solid var(--danger);
+            color: var(--danger);
+        }
+    </style>
+</head>
+<body class="app-page">
+    <nav class="app-nav">
+        <div class="nav-brand">
+            <a href="../index.html">← Back</a>
+            <h2>🔍 Searching Algorithms</h2>
+        </div>
+        <div class="nav-stats">
+            <span>Algorithm: <strong id="current-algorithm">Linear Search</strong></span>
+            <span>Elements Checked: <strong id="elements-checked">0</strong></span>
+            <span>Current Index: <strong id="current-index">-</strong></span>
+        </div>
+    </nav>
+
+    <div class="app-container">
+        <aside class="control-panel">
+            <div class="panel-section">
+                <h3>🎯 Select Algorithm</h3>
+                <select class="input-field" id="algorithm-select">
+                    <option value="linear">Linear Search</option>
+                    <option value="binary">Binary Search (Sorted)</option>
+                    <option value="jump">Jump Search (Sorted)</option>
+                    <option value="interpolation">Interpolation Search (Sorted)</option>
+                </select>
+            </div>
+
+            <div class="panel-section">
+                <h3>🔍 Search Settings</h3>
+                <input type="number" class="input-field" id="search-value" placeholder="Enter value to search" min="1" max="100">
+                <button class="btn btn-primary btn-block" id="search-btn">
+                    Start Search
+                </button>
+                <div class="search-result" id="search-result">
+                    <span id="result-text"></span>
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <h3>📊 Array Settings</h3>
+                <label>Array Size: <span id="size-value">20</span></label>
+                <input type="range" class="input-field" id="array-size" min="10" max="50" value="20">
+                <button class="btn btn-outline btn-block" id="generate-sorted-btn">
+                    Generate Sorted Array
+                </button>
+                <button class="btn btn-outline btn-block" id="generate-random-btn">
+                    Generate Random Array
+                </button>
+                <button class="btn btn-outline btn-block" id="reset-btn">
+                    Reset
+                </button>
+            </div>
+
+            <div class="panel-section">
+                <h3>🎛️ Speed Control</h3>
+                <label>Speed: <span id="speed-value">50</span>%</label>
+                <input type="range" class="input-field" id="speed-control" min="1" max="100" value="50">
+            </div>
+
+            <div class="panel-section connection-status">
+                <div id="connection-indicator" class="status-dot connecting"></div>
+                <span id="connection-text">Connecting...</span>
+            </div>
+        </aside>
+
+        <main class="visualization-panel">
+            <div class="canvas-header">
+                <h3>Search Visualization</h3>
+                <div class="canvas-controls">
+                    <span class="operation-badge" id="status-badge">Ready</span>
+                </div>
+            </div>
+            
+            <div class="canvas-wrapper">
+                <canvas id="visualization-canvas"></canvas>
+            </div>
+
+            <div class="operation-panel">
+                <div class="operation-header">
+                    <span class="operation-title">Algorithm Complexity</span>
+                </div>
+                <div class="operation-description">
+                    <p>Time Complexity: <strong id="time-complexity">O(n)</strong></p>
+                    <p>Space Complexity: <strong id="space-complexity">O(1)</strong></p>
+                    <p>Best for: <strong id="best-use-case">Unsorted arrays</strong></p>
+                </div>
+            </div>
+        </main>
+
+        <aside class="code-panel">
+            <div class="code-header">
+                <h3>💻 Algorithm Code</h3>
+            </div>
+            
+            <div class="code-content">
+                <pre id="code-display"><code>// Linear Search
+public int linearSearch(int[] arr, int target) {
+    for (int i = 0; i < arr.length; i++) {
+        if (arr[i] == target) {
+            return i; // Found
+        }
+    }
+    return -1; // Not found
+}</code></pre>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/core/websocket-handler.js"></script>
+    <script src="../js/core/visualizer-base.js"></script>
+    <script src="../js/core/animation-engine.js"></script>
+    <script src="../js/algorithms/searching-visualizer.js"></script>
+    <script>
+        // Searching Manager
+        class SearchingManager {
+            constructor() {
+                this.visualizer = new SearchingVisualizer('visualization-canvas');
+                this.currentAlgorithm = 'linear';
+                this.setupEventListeners();
+                this.updateComplexity();
+            }
+            
+            setupEventListeners() {
+                // Algorithm selection
+                document.getElementById('algorithm-select').addEventListener('change', (e) => {
+                    this.currentAlgorithm = e.target.value;
+                    document.getElementById('current-algorithm').textContent = 
+                        e.target.options[e.target.selectedIndex].text;
+                    this.updateComplexity();
+                    this.updateCode();
+                    
+                    // Generate sorted array for algorithms that require it
+                    if (this.currentAlgorithm !== 'linear') {
+                        this.visualizer.generateSortedArray();
+                    }
+                });
+                
+                // Search button
+                document.getElementById('search-btn').addEventListener('click', () => {
+                    this.search();
+                });
+                
+                // Enter key on search input
+                document.getElementById('search-value').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.search();
+                    }
+                });
+                
+                // Array size
+                const sizeSlider = document.getElementById('array-size');
+                sizeSlider.addEventListener('input', () => {
+                    document.getElementById('size-value').textContent = sizeSlider.value;
+                    this.visualizer.arraySize = parseInt(sizeSlider.value);
+                });
+                
+                // Generate buttons
+                document.getElementById('generate-sorted-btn').addEventListener('click', () => {
+                    this.visualizer.generateSortedArray();
+                    document.getElementById('search-result').style.display = 'none';
+                });
+                
+                document.getElementById('generate-random-btn').addEventListener('click', () => {
+                    if (this.currentAlgorithm !== 'linear') {
+                        alert('Random arrays only work with Linear Search. Other algorithms require sorted arrays.');
+                        return;
+                    }
+                    this.visualizer.generateRandomArray();
+                    document.getElementById('search-result').style.display = 'none';
+                });
+                
+                // Reset button
+                document.getElementById('reset-btn').addEventListener('click', () => {
+                    this.visualizer.reset();
+                    document.getElementById('search-result').style.display = 'none';
+                });
+                
+                // Speed control
+                const speedSlider = document.getElementById('speed-control');
+                speedSlider.addEventListener('input', () => {
+                    document.getElementById('speed-value').textContent = speedSlider.value;
+                    this.visualizer.setSpeed(parseInt(speedSlider.value));
+                });
+            }
+            
+            async search() {
+                const searchInput = document.getElementById('search-value');
+                const value = parseInt(searchInput.value);
+                
+                if (isNaN(value) || value < 1 || value > 100) {
+                    alert('Please enter a valid number between 1 and 100');
+                    return;
+                }
+                
+                document.getElementById('search-result').style.display = 'none';
+                document.getElementById('search-btn').disabled = true;
+                document.getElementById('status-badge').textContent = 'Searching...';
+                
+                await this.visualizer.search(value, this.currentAlgorithm);
+                
+                document.getElementById('search-btn').disabled = false;
+                document.getElementById('status-badge').textContent = 'Complete';
+            }
+            
+            updateComplexity() {
+                const complexities = {
+                    'linear': {
+                        time: 'O(n)',
+                        space: 'O(1)',
+                        bestUse: 'Unsorted arrays, small datasets'
+                    },
+                    'binary': {
+                        time: 'O(log n)',
+                        space: 'O(1)',
+                        bestUse: 'Large sorted arrays'
+                    },
+                    'jump': {
+                        time: 'O(√n)',
+                        space: 'O(1)',
+                        bestUse: 'Sorted arrays, better than linear'
+                    },
+                    'interpolation': {
+                        time: 'O(log log n)',
+                        space: 'O(1)',
+                        bestUse: 'Uniformly distributed sorted data'
+                    }
+                };
+                
+                const complexity = complexities[this.currentAlgorithm];
+                document.getElementById('time-complexity').textContent = complexity.time;
+                document.getElementById('space-complexity').textContent = complexity.space;
+                document.getElementById('best-use-case').textContent = complexity.bestUse;
+            }
+            
+            updateCode() {
+                const codes = {
+                    'linear': `// Linear Search
+public int linearSearch(int[] arr, int target) {
+    for (int i = 0; i < arr.length; i++) {
+        if (arr[i] == target) {
+            return i; // Found
+        }
+    }
+    return -1; // Not found
+}`,
+                    'binary': `// Binary Search
+public int binarySearch(int[] arr, int target) {
+    int left = 0;
+    int right = arr.length - 1;
+    
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        
+        if (arr[mid] == target) {
+            return mid; // Found
+        }
+        
+        if (arr[mid] < target) {
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+    }
+    
+    return -1; // Not found
+}`,
+                    'jump': `// Jump Search
+public int jumpSearch(int[] arr, int target) {
+    int n = arr.length;
+    int step = (int) Math.sqrt(n);
+    int prev = 0;
+    
+    // Jump through blocks
+    while (arr[Math.min(step, n) - 1] < target) {
+        prev = step;
+        step += (int) Math.sqrt(n);
+        if (prev >= n) {
+            return -1;
+        }
+    }
+    
+    // Linear search in block
+    while (arr[prev] < target) {
+        prev++;
+        if (prev == Math.min(step, n)) {
+            return -1;
+        }
+    }
+    
+    if (arr[prev] == target) {
+        return prev;
+    }
+    
+    return -1;
+}`,
+                    'interpolation': `// Interpolation Search
+public int interpolationSearch(int[] arr, int target) {
+    int low = 0;
+    int high = arr.length - 1;
+    
+    while (low <= high && target >= arr[low] && 
+           target <= arr[high]) {
+        
+        if (low == high) {
+            if (arr[low] == target) return low;
+            return -1;
+        }
+        
+        // Interpolation formula
+        int pos = low + (((high - low) / 
+                 (arr[high] - arr[low])) * 
+                 (target - arr[low]));
+        
+        if (arr[pos] == target) {
+            return pos;
+        }
+        
+        if (arr[pos] < target) {
+            low = pos + 1;
+        } else {
+            high = pos - 1;
+        }
+    }
+    
+    return -1;
+}`
+                };
+                
+                document.getElementById('code-display').innerHTML = `<code>${codes[this.currentAlgorithm] || ''}</code>`;
+            }
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            const manager = new SearchingManager();
+            console.log('✅ Searching Visualizer Initialized');
+        });
+    </script>
+</body>
+</html>
